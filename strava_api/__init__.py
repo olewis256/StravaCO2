@@ -11,3 +11,4 @@ from .endpoints import (
     get_athlete_activities,
     get_athlete_stats,
 )
+from .co2_stats import Emissions
