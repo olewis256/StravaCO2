@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="profile">
+	<div class="pill">
+		<a class="avatar" href="https://www.strava.com/athletes/{{ athlete.id }}"><img src="{{ athlete.profile }}"/></a>
+		<div>
+			<p class="name">{{ athlete.firstname }} {{ athlete.lastname }}</p>
+			<p class="location"><i class="fa-solid fa-location-dot"></i> {{ athlete.city }}, {{ athlete.country }}</p>
+		</div>
+	</div>
+</section>
+
+<section class="summary">
+	<h1>Summary</h1>
+
+	<div class="card summary">
+	
+	
+		<a class="stat-group inline-row">
+			<i class="fa-solid fa-person-running" title="Running"></i>
+				<div class="flex-column">
+                    <p class="stat co2" title="CO2 emissions"><i class="fa-solid fa-car"></i> {{ co2_running_car }}</p>
+                    <p class="stat co2" title="CO2 emissions"><i class="fa-solid fa-train-tram"></i> {{ co2_running_train }}</p>
+				</div>
+        </a>
+        <a class="stat-group inline-row">
+			<i class="fa-solid fa-person-biking" title="Running"></i>
+				<div class="flex-column">
+                    <p class="stat co2" title="CO2 emissions"><i class="fa-solid fa-car"></i> {{ co2_riding_car }}</p>
+                    <p class="stat co2" title="CO2 emissions"><i class="fa-solid fa-train-tram"></i> {{ co2_riding_train }}</p>
+				</div>
+        </a>
+	</div>
+
+</section>
+
+{% endblock %}

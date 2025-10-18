@@ -44,3 +44,7 @@ def format_time(x: float, detail: int = 2) -> str:
 	return ' '.join([
 		f'{floor(value)} {unit}' for value, unit in zip(values, units) if value >= 1
 	][:detail]) or '0 seconds'
+
+def format_emissions(x: float) -> str:
+	"""Describes a CO2 emission in grams or kilograms"""
+	return f'{x:.0f} kg CO2'

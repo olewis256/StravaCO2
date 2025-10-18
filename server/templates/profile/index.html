@@ -33,6 +33,7 @@
 				<p class="stat distance" title="Distance"><i class="fa-solid fa-ruler"></i> {{ format_distance(stats.all_run_totals.distance) }}</p>
 				<p class="stat duration" title="Duration"><i class="fa-solid fa-stopwatch"></i> {{ format_time(stats.all_run_totals.moving_time) }}</p>
 				<p class="stat elevation" title="Elevation Gain"><i class="fa-solid fa-arrow-trend-up"></i> {{ format_elevation(stats.all_run_totals.elevation_gain) }}</p>
+				<p class="stat co2" title="CO2 emissions"><i class="fa-solid fa-arrow-trend-up"></i> {{ co2 }}</p>
 			</div>
 		</a>
 		{% endif %}

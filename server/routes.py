@@ -82,3 +82,45 @@ def deauthorize():
     res.delete_cookie('refresh-token')
     return res
 
+@app.route('/co2')
+def CO2():
+    refresh = request.cookies.get('refresh-token')
+    client = api.Client.from_refresh(request.cookies.get('refresh-token'))
+    if not client:
+        # The user hasn't authorized, delete stored token (if exists) and render home
+        res = Response(render_template('home/index.html', title='Home', connect_url=api.connect_url, auth=False))
+        res.delete_cookie('refresh-token')
+        return res
+
+    athlete = api.get_athlete(client)
+    if isinstance(athlete, api.models.Fault): return render_error(500)
+    activity_stats = api.get_athlete_stats(client, athlete.id)
+    if isinstance(activity_stats, api.models.Fault): return render_error(500)
+
+    use_metric = athlete.measurement_preference == 'meters'
+
+    dist_ride = activity_stats.all_ride_totals.distance
+    dist_run = activity_stats.all_run_totals.distance
+
+    emission_run_car = api.Emissions.emissions(distance=dist_run, type='car')
+    emission_bike_car = api.Emissions.emissions(distance=dist_ride, type='car')
+
+    emission_run_train = api.Emissions.emissions(distance=dist_run, type='train')
+    emission_bike_train = api.Emissions.emissions(distance=dist_ride, type='train')
+
+    emission_run_car = units.format_emissions(emission_run_car)
+    emission_bike_car = units.format_emissions(emission_bike_car)
+
+    emission_run_train = units.format_emissions(emission_run_train)
+    emission_bike_train = units.format_emissions(emission_bike_train)
+
+    res = render_template('co2/index.html',
+                            title='CO2',
+                            athlete=athlete,
+                            auth=bool(refresh),
+                            co2_running_car=emission_run_car,
+                            co2_riding_car=emission_bike_car,
+                            co2_running_train=emission_run_train,
+                            co2_riding_train=emission_bike_train)
+
+    return res
