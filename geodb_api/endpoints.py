@@ -162,9 +162,12 @@ def find_places(params: FindPlacesParameters, max_results: int) -> list[Union[mo
             break
     return places
 
-def find_city_by_name(name: str) -> Union[models.PopulatedPlaceSummary, models.Error]:
-    """Find the city ID corresponding to a city name"""
-    params = FindPlacesParameters(namePrefix=name, types=[models.PopulatedPlaceType.CITY])
+def find_city_by_name(name: str, country_code: Optional[str] = None) -> Union[models.PopulatedPlaceSummary, models.Error]:
+    params = FindPlacesParameters(
+        namePrefix=name,
+        types=[models.PopulatedPlaceType.CITY],
+        countryIds=[country_code] if country_code else None
+    )
     place = find_places(params, max_results=1)[0]
     if isinstance(place, models.Error): return place
     return place
