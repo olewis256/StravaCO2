@@ -2,6 +2,7 @@ import requests
 import os
 
 CLIMATIQ_ID = os.environ['CLIMATIQ_ID']
+CLIMATIQ_URL = "https://api.climatiq.io/data/v1/estimate"
 
 types_vehicle = {
             "car": "passenger_vehicle-vehicle_type_car-fuel_source_na-engine_size_na-vehicle_age_na-vehicle_weight_na",
@@ -9,20 +10,33 @@ types_vehicle = {
             "train": "passenger_train-route_type_na-fuel_source_na"
         }  
 
+class EmissionsError(Exception):
+    
+    def __init__(self, status_code: int, message: str):
+        self.status_code = status_code
+        self.message = message
+        super().__init__(f"Emissions API error {status_code}: {message}")
+
 class Emissions:
 
     def __init__(self):
-        self.api_calls = 0
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Authorization": f"Bearer {CLIMATIQ_ID}",
+            "Content-Type": "application/json"
+        })
     
-    @classmethod
-    def emissions(cls, distance, type):
+    def estimate(self, distance: float, type: str) -> float:
+
+        if type not in types_vehicle:
+            raise ValueError(
+                f"Unsupported vehicle type: {type}"
+            )
+
+
         dist = int(float(distance/1000))  
 
-        req = requests.post("https://api.climatiq.io/data/v1/estimate",
-            headers={
-                "Authorization": f"Bearer {CLIMATIQ_ID}",
-                "Content-Type": "application/json"
-            },
+        req = self.session.post(CLIMATIQ_URL,
             json= {
             "emission_factor": {
             "activity_id": types_vehicle[type],      
@@ -33,7 +47,9 @@ class Emissions:
             "distance_unit": "km"
             }}
         )
-        res = req.json()
+        
         if req.status_code != 200: return
 
-        return res['co2e']
+        res = req.json()
+
+        return res["co2e"]
