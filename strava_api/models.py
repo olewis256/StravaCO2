@@ -229,3 +229,76 @@ class SummaryActivity(Model):
             return ID(value)
         else:
             return value
+
+@dataclass 
+class CurrentWeather(Model): 
+    last_updated: str 
+    last_updated_epoch: int
+    temp_c: float
+    temp_f: float
+    feelslike_c: float
+    feelslike_f: float
+    windchill_c: float
+    windchill_f: float
+    heatindex_c: float
+    heatindex_f: float
+    dewpoint_c: float
+    dewpoint_f: float
+    condition: Condition
+    wind_mph: float 
+    wind_kph: float
+    wind_degree: int
+    wind_dir: str
+    pressure_mb: float
+    pressure_in: float
+    precip_mm: float
+    precip_in: float
+    humidity: int
+    cloud: int
+    is_day: int
+    uv: float
+    gust_mph: float
+    gust_kph: float
+
+    @classmethod
+    def parse_field(cls, key: str, value: Any) -> Any:
+        return value
+    
+@dataclass
+class Condition(Model):
+    text: str
+    icon: str
+    code: int
+
+    @classmethod
+    def parse_field(cls, key: str, value: Any) -> Any:
+        return value
+
+@dataclass
+class Location(Model):
+    name: str
+    region: str
+    country: str
+    lat: float
+    lon: float
+    tz_id: str
+    localtime_epoch: int
+    localtime: str
+
+    @classmethod
+    def parse_field(cls, key: str, value: Any) -> Any:
+        return value
+    
+@dataclass
+class CurrentWeatherResponse(Model):
+    location: Location
+    current: CurrentWeather
+
+    @classmethod
+    def parse_field(cls, key: str, value: Any) -> CurrentWeatherResponse:
+        if key == 'location':
+            return Location.fromResponse(value)
+        elif key == 'current':
+            return CurrentWeather.fromResponse(value)
+        else:
+            return value
